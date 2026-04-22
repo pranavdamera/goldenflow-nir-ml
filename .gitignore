@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+audit_log.jsonl
+honey_nir_net.pt
+honey_nir_net.onnx
