@@ -9,13 +9,18 @@ from scipy.signal import savgol_filter
 class SpectralPreprocessor:
     """Preprocess raw NIR arrays into model-ready tensors.
 
-    Steps:
-    1. Range validation over 900-1700nm
-    2. Savitzky-Golay smoothing for high-frequency noise reduction
-    3. Standard Normal Variate (SNV) normalization
+    Pipeline order: validate → smooth → normalize.
 
-    SNV removes multiplicative and additive scatter effects common in NIR
-    measurements by centering each spectrum and scaling by its own variance.
+    Savitzky-Golay smoothing runs *before* SNV normalization deliberately:
+    high-frequency noise inflates a spectrum's variance estimate, which
+    would corrupt the mean/std calculation SNV depends on. Smoothing first
+    gives a cleaner baseline for normalization.
+
+    SNV (Standard Normal Variate) removes multiplicative scatter effects —
+    baseline shifts caused by differences in particle size, path length,
+    or detector-sample distance across measurements. Because each spectrum
+    is normalized by its own statistics, SNV is insensitive to inter-scan
+    intensity drift without needing an external reference.
     """
 
     def validate_range(self, array: np.ndarray) -> None:

@@ -1,4 +1,14 @@
-"""HoneyNIRNet architecture for NIR adulteration inference."""
+"""HoneyNIRNet architecture for NIR adulteration inference.
+
+Design rationale:
+- 1D convolutions operate over the spectral dimension directly; no 2D reshaping needed.
+- Squeeze-Excitation attention captures inter-channel (frequency-band) correlations,
+  which is the dominant structure in NIR spectra. Multi-head self-attention would add
+  positional relationships that are not meaningful across a smoothed spectral axis and
+  would push the ONNX export well past the 2MB deployment target.
+- Three Conv blocks (32→64→128 channels) give sufficient representational depth while
+  keeping parameter count low enough for the size constraint.
+"""
 
 from __future__ import annotations
 
